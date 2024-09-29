@@ -3,8 +3,36 @@ import '@radix-ui/themes/styles.css';
 
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import { Product } from './product';
 import { Theme } from '@radix-ui/themes';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import SignInPage from './components/sign-in';
+import SignUpPage from './components/sign-up';
+import { ProtectedLayout } from './layout/protected.layout';
+import RootLayout from './layout/root.layout';
+import { PageNotFound } from './components/page-not-found';
+import { WelcomePage } from './components/welcome-page';
+import { Product } from './components/product';
+
+const router = createBrowserRouter([
+  {
+    element: <RootLayout />,
+    children: [
+      { path: '/', element: <WelcomePage /> },
+      { path: '/sign-in/*', element: <SignInPage /> },
+      { path: '/sign-up/*', element: <SignUpPage /> },
+      {
+        element: <ProtectedLayout />,
+        children: [
+          {
+            path: ':orgName/*',
+            element: <Product />,
+          },
+        ],
+      },
+      { path: '*', element: <PageNotFound /> },
+    ],
+  },
+]);
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -16,7 +44,7 @@ createRoot(document.getElementById('root')!).render(
       radius="medium"
       scaling="100%"
     >
-      <Product />
+      <RouterProvider router={router} />
     </Theme>
   </StrictMode>,
 );
